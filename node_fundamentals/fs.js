@@ -14,8 +14,6 @@ fs.mkdirSync(path.resolve(dirname, 'pasta1'));
 fs.mkdirSync(path.resolve(dirname, 'folder1' , 'folder2', 'folder3'), {recursive:true}); 
 //só permite com o recursive que vai permitir criar pastas dentro de pastas
 
-//teste git
-
 
 //fs.mkdirSync(path.resolve(dirname, 'lixo')); 
 //apaga a pasta (remove)

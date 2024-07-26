@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "name": "Ricardo",
+    "email": "pedro@sapo.pt"
+  },
+  {
+    "id": "2",
+    "name": "Ivan",
+    "email": "ivan@mail.ru"
+  },
+  {
+    "name": "Ivan",
+    "email": "ivan@mail.ru",
+    "password": "$2b$07$PlhMN2hv978jAP52BzycaedntYVVoQT.aBB6qYOH/6RLM5Rty328y",
+    "id": "c354314f-bff1-4452-a869-25b01a2cbc3a"
+  }
+]

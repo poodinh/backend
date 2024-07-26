@@ -43,7 +43,7 @@ class ProductService {
         try {
             const products: IProduct[] | undefined = this.readProductJson();
 
-            const foundProduct = products?.find(product => product.id === productId);
+            const foundProduct = products?.find(product => product.id == productId);
             //o ? é que ele pode não encontrar
             return foundProduct;
 

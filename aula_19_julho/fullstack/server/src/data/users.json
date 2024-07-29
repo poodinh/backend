@@ -14,5 +14,17 @@
     "email": "ivan@mail.ru",
     "password": "$2b$07$PlhMN2hv978jAP52BzycaedntYVVoQT.aBB6qYOH/6RLM5Rty328y",
     "id": "c354314f-bff1-4452-a869-25b01a2cbc3a"
+  },
+  {
+    "name": "Ivan",
+    "email": "ivan@mail.ru",
+    "password": "$2b$07$RjIxyvZi9I7SVUUK1Ru/RuXoB4DQOQDvG3N7K7L4tdEcnSsYOCelm",
+    "id": "e1cccc2e-93f4-4b9c-92b7-63465e98de14"
+  },
+  {
+    "name": "Ivan",
+    "email": "ivan@mail.ru",
+    "password": "$2b$07$F7Dyncy5dV/9XGTvdMVjgun76JVNAlN9OlVgRyRXIbm4uDINsU53q",
+    "id": "884abaa5-8904-47a2-9ce4-9c78820899e6"
   }
 ]

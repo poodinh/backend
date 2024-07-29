@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { IProduct } from '../interfaces/interfaces.js';
 import productService from '../services/productService.js';
 
@@ -30,6 +31,10 @@ class ProductController {
   }
   create = async (req: Request, res: Response) => {
     try{
+      const errors = validationResult(req); //chamar a validação 
+      if (!errors.isEmpty()){
+        res.status(400).json({ errors: errors.array()})
+      } //se o array de erros n tiver vazio quer dizer q tem erros e vai enviar os erros para lá
       const productToCreate: IProduct = req.body; //body é o que recebe os dados para publicar
       const createdProduct: IProduct | undefined= productService.create(productToCreate);
       res.status(201).json(createdProduct);
@@ -39,6 +44,7 @@ class ProductController {
   }
   update = async (req: Request, res: Response) => {
     try{
+      
       const productId: string = req.params.id;
       const productToUpdate: IProduct= req.body;
       const updatedProduct: IProduct| undefined= productService.update(productId,productToUpdate);

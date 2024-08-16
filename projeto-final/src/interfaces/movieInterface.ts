@@ -1,6 +1,6 @@
-// import {Document} from 'mongoose'; vamos precisar qnd tivermos o mongoose instalada
+import {Document} from 'mongoose'; 
 
-export default interface IMovie /*extends Document*/ {
+export default interface IMovie extends Document {
   title: string;
   releaseDate: Date;
   trailerLink: string;

@@ -1,37 +1,38 @@
-import {Request, Response, NextFunction} from 'express'
+import { Request, Response, NextFunction } from 'express'
 import IMovie from '../interfaces/movieInterface.js';
+import movieService from '../services/movieService.js';
 
 class MovieController {
     async getAll(req: Request, res: Response, next: NextFunction) {
-        try{
-            const movies= req.body
-        res.status(201).json(movies)
-        } catch (err){
+        try {
+            const movies = req.body
+            res.status(201).json(movies)
+        } catch (err) {
             console.log(err);
         }
     }
-    async getOne(req: Request, res: Response, next: NextFunction) {}
+    async getOne(req: Request, res: Response, next: NextFunction) { }
     async create(req: Request, res: Response, next: NextFunction) {
-        try{
-            const {title, releaseDate, trailerLink, posterUrl, genres} = req.body;
+        try {
+            const { title, releaseDate, trailerLink, genres } = req.body;
+            const poster = req.files?.poster;
 
-            const newMovie : IMovie ={
+            const movieData = {
                 title,
                 releaseDate,
                 trailerLink,
-                posterUrl,
                 genres
-            }
+            } as IMovie;
 
-            const createdMovie = newMovie; //é pra fazer algo aqui para por na database acho eu 
+            const createdMovie = await movieService.create(movieData, poster);
 
             res.status(201).json(createdMovie);
-        } catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
-    async update(req: Request, res: Response, next: NextFunction) {}
-    async delete(req: Request, res: Response, next: NextFunction) {}
+    async update(req: Request, res: Response, next: NextFunction) { }
+    async delete(req: Request, res: Response, next: NextFunction) { }
 }
 
 export default new MovieController();

@@ -3,48 +3,69 @@ import IMovie from "../interfaces/movieInterface.js";
 import movieService from "../services/movieService.js";
 import { validationResult } from "express-validator";
 import { error } from "console";
+import { checkID } from "../middlewares/authMiddleware.js";
 
 class MovieController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      
       const movies: IMovie[] = await movieService.getAll();
+      
       res.status(201).json(movies);
     } catch (err) {
-        res.status(500).json({ error: "Failed to get all movies" });
+      res.status(500).json({ error: "Failed to get all movies" });
     }
   }
   async filter(req: Request, res: Response, next: NextFunction) {
     try {
-        //const typeFilter = req.originalUrl.split('=')[1].split('&')[0]
-        const movieFilter = req.originalUrl.split('=')[1].replace(/%20/g, ' ')
-
-        const filteredMovies: IMovie[] | undefined = await movieService.filter( movieFilter);
-        res.status(201).json(filteredMovies);
-      } catch (err) {
-        res.status(500).json({ error: "Failed to filter movies" });
-      }
+      const querySent: {} = req.query;
+      const movieFilter = Object.values(querySent)[0] as string;
+      const filteredMovies: IMovie[] | undefined =
+        await movieService.filter(movieFilter);
+      res.status(201).json(filteredMovies);
+    } catch (err) {
+      res.status(500).json({ error: "Failed to find the movies" });
+    }
   }
   async sort(req: Request, res: Response, next: NextFunction) {
     try {
-        const sortedMovies: IMovie[] = await movieService.sort();
-      res.status(201).json(sortedMovies);
-      } catch (err) {
-        res.status(500).json({ error: "Failed to sort movies" });
+      const sortingOrder: {} = req.query;
+      const sortingType: string | unknown = Object.values(sortingOrder)[0];
+      const sortingCategory: string = Object.keys(sortingOrder)[0];
+      if (
+        sortingType != "asc" &&
+        sortingType != "ascending" &&
+        sortingType != "desc" &&
+        sortingType != "descending"
+      ) {
+        res.status(400).json({ error: "Key of the sorting type is incorrect" });
+      } else if (
+        sortingCategory != "title" &&
+        sortingCategory != "releaseDate"
+      ) {
+        res
+          .status(400)
+          .json({ error: "Value of the sorting category is incorret" });
+      } else {
+        const sortedMovies: IMovie[] = await movieService.sort(sortingOrder);
+        res.status(201).json(sortedMovies);
       }
+    } catch (err) {
+      res.status(500).json({ error: "Failed to sort movies" });
+    }
   }
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         const errorsArray = errors.array();
+        // changing the error format so it only appears the message
         let allErrors = [];
         for (let i = 0; i < errorsArray.length; i++) {
           const msg = errorsArray[i].msg;
           allErrors.push(msg);
         }
-        if(allErrors.length==1){
-            return res.status(422).json({ error: allErrors })
+        if (allErrors.length == 1) {
+          return res.status(422).json({ error: allErrors });
         }
         return res.status(422).json({ errors: allErrors });
       }
@@ -58,10 +79,38 @@ class MovieController {
       } as IMovie;
 
       const createdMovie = await movieService.create(movieData, poster);
-
-      res.status(201).json(createdMovie);
-    } catch (error) {
+      if (createdMovie === null) {
+        res.status(422).json({ error: "Movie already exists in the database" });
+      } else {
+        res.status(201).json(createdMovie);
+      }
+    } catch (err) {
       res.status(500).json({ error: "Failed to create movie" });
+    }
+  }
+  async rate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const movieId = req.params.id;
+      const rating = req.body;
+      const updatedMovie = await movieService.rate(movieId, rating);
+      if (updatedMovie=== 1) {
+        return res
+          .status(404)
+          .json({ error: "Invalid rate, must be between 1 and 5" });
+      }
+      if (updatedMovie=== 2) {
+        return res
+          .status(404)
+          .json({ error: "Invalid user ID" });
+      }
+      if (updatedMovie=== 3) {
+        return res
+          .status(404)
+          .json({ error: "Movie doesn't exist in the database" });
+      }
+      res.status(201).json(updatedMovie);
+    } catch (err) {
+      res.status(500).json({ error: "Failed to update movie" });
     }
   }
   async update(req: Request, res: Response, next: NextFunction) {
@@ -69,25 +118,29 @@ class MovieController {
       const movieId = req.params.id;
       const updates = req.body;
       const updatedMovie = await movieService.update(movieId, updates);
-      if(!updatedMovie){
-        return res.status(404).json({ error: "Movie doesn't exist in the database" });
-    }
+      if (!updatedMovie) {
+        return res
+          .status(404)
+          .json({ error: "Movie doesn't exist in the database" });
+      }
       res.status(201).json(updatedMovie);
-    } catch (error) {
+    } catch (err) {
       res.status(500).json({ error: "Failed to update movie" });
     }
   }
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-        const movieId = req.params.id;
-        const deletedMovie = await movieService.delete(movieId);
-        if(!deletedMovie){
-            return res.status(404).json({ error: "Movie already doesn't exist in the database" });
-        }
-        res.json(deletedMovie);
-      } catch (error) {
-        res.status(500).json({ error: "Failed to update movie" });
+      const movieId = req.params.id;
+      const deletedMovie = await movieService.delete(movieId);
+      if (!deletedMovie) {
+        return res
+          .status(404)
+          .json({ error: "Movie doesn't exist in the database" });
       }
+      res.json(deletedMovie);
+    } catch (err) {
+      res.status(500).json({ error: "Failed to delete movie" });
+    }
   }
 }
 

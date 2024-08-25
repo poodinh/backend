@@ -1,9 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-import mongoose from "mongoose"; //dps no de casa fazer com uma nova database no mongoose 
+import mongoose from "mongoose"; 
 import cors from "cors";
 import fileUpload from "express-fileupload";
 import movieRouter from "./routers/movieRouter.js";
+import userRouter from "./routers/userRouter.js";
 //tem que haver um read me com a documentação do projeto, com as rotas que têm e exemplo do objeto que se pode mandar para lá
 //idealmente fazer com o swagger
 
@@ -28,6 +29,7 @@ app.use(
 app.use(express.json());
 
 app.use("/api", movieRouter);
+app.use("/auth", userRouter);
 
 const startApp = async () => {
   try {

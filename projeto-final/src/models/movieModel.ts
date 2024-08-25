@@ -22,6 +22,10 @@ const MovieSchema = new mongoose.Schema<IMovie>({
         type: [String],
         required: true
     },
+    ratings:{
+        type: Object,
+        default: {}
+    }
 })
 
 const MovieModel = mongoose.model<IMovie>('Movie', MovieSchema)

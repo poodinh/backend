@@ -5,8 +5,7 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 import movieRouter from "./routers/movieRouter.js";
 import userRouter from "./routers/userRouter.js";
-//tem que haver um read me com a documentação do projeto, com as rotas que têm e exemplo do objeto que se pode mandar para lá
-//idealmente fazer com o swagger
+import setUp from "./docs/swagger.js";
 
 dotenv.config();
 
@@ -25,7 +24,7 @@ app.use(
   })
 );
 
-//ensinar a usar com o formato json
+
 app.use(express.json());
 
 app.use("/api", movieRouter);
@@ -51,4 +50,5 @@ const startApp = async () => {
   }
 };
 
+setUp(app)
 startApp();

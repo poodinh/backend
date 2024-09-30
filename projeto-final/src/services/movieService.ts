@@ -28,7 +28,23 @@ class MovieService {
   }
   async sort(order: {}) {
     try {
-      return await MovieModel.find().sort(order);
+      const sortingType: string | unknown = Object.values(order)[0];
+      const sortingCategory: string = Object.keys(order)[0];
+      if (
+        sortingType != "asc" &&
+        sortingType != "ascending" &&
+        sortingType != "desc" &&
+        sortingType != "descending"
+      ) {
+        return null;
+      } else if (
+        sortingCategory != "title" &&
+        sortingCategory != "releaseDate"
+      ) {
+        return undefined;
+      } else {
+        return await MovieModel.find().sort(order);
+      }
     } catch (error) {
       throw new Error("Failed to sort the movies");
     }
@@ -70,11 +86,8 @@ class MovieService {
       if (!movieToRate) {
         return 3;
       }
-
       let ratings: any = movieToRate.ratings;
-
       ratings[userRatingID] = rate;
-
       const ratedMovie = await MovieModel.findByIdAndUpdate(
         movieId,
         { ratings: ratings },

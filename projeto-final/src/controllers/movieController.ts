@@ -9,7 +9,7 @@ class MovieController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const movies: IMovie[] = await movieService.getAll();
-      
+
       res.status(201).json(movies);
     } catch (err) {
       res.status(500).json({ error: "Failed to get all movies" });
@@ -21,7 +21,11 @@ class MovieController {
       const movieFilter = Object.values(querySent)[0] as string;
       const filteredMovies: IMovie[] | undefined =
         await movieService.filter(movieFilter);
-      res.status(201).json(filteredMovies);
+      if (filteredMovies.length == 0) {
+        res.status(404).json({ error: "Movie not found" });
+      } else {
+        res.status(201).json(filteredMovies);
+      }
     } catch (err) {
       res.status(500).json({ error: "Failed to find the movies" });
     }
@@ -29,24 +33,16 @@ class MovieController {
   async sort(req: Request, res: Response, next: NextFunction) {
     try {
       const sortingOrder: {} = req.query;
-      const sortingType: string | unknown = Object.values(sortingOrder)[0];
-      const sortingCategory: string = Object.keys(sortingOrder)[0];
-      if (
-        sortingType != "asc" &&
-        sortingType != "ascending" &&
-        sortingType != "desc" &&
-        sortingType != "descending"
-      ) {
+
+      const sortedMovies: IMovie[] | undefined | null =
+        await movieService.sort(sortingOrder);
+      if (sortedMovies === null) {
         res.status(400).json({ error: "Key of the sorting type is incorrect" });
-      } else if (
-        sortingCategory != "title" &&
-        sortingCategory != "releaseDate"
-      ) {
+      } else if (sortedMovies === undefined) {
         res
           .status(400)
           .json({ error: "Value of the sorting category is incorret" });
       } else {
-        const sortedMovies: IMovie[] = await movieService.sort(sortingOrder);
         res.status(201).json(sortedMovies);
       }
     } catch (err) {
@@ -93,17 +89,15 @@ class MovieController {
       const movieId = req.params.id;
       const rating = req.body;
       const updatedMovie = await movieService.rate(movieId, rating);
-      if (updatedMovie=== 1) {
+      if (updatedMovie === 1) {
         return res
-          .status(404)
+          .status(400)
           .json({ error: "Invalid rate, must be between 1 and 5" });
       }
-      if (updatedMovie=== 2) {
-        return res
-          .status(404)
-          .json({ error: "Invalid user ID" });
+      if (updatedMovie === 2) {
+        return res.status(404).json({ error: "Invalid user ID" });
       }
-      if (updatedMovie=== 3) {
+      if (updatedMovie === 3) {
         return res
           .status(404)
           .json({ error: "Movie doesn't exist in the database" });

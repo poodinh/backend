@@ -4,6 +4,12 @@ import userService from "../services/userService.js";
 import { validationResult } from "express-validator";
 import { error } from "console";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Movies
+ *   description: Movie management
+ */
 class UserController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
